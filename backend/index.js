@@ -34,7 +34,17 @@ app.post('/webhook', async (req, res) => {
     return res.sendStatus(400);
   }
 
-  console.log('received leadgen_id:', leadgenId);
+  const url = `https://graph.facebook.com/v21.0/${leadgenId}?fields=field_data&access_token=${process.env.PAGE_ACCESS_TOKEN}`;
+  const response = await fetch(url);
+  const data = await response.json();
+
+  if (!data.field_data) {
+    console.log('graph api error:', data);
+    return;
+  }
+
+  console.log('lead fetched:', data.field_data);
+
   res.sendStatus(200);
 });
 
