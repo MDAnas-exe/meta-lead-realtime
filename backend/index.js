@@ -13,6 +13,11 @@ app.get('/webhook', (req, res) => {
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
 
+  if (!process.env.VERIFY_TOKEN) {
+    console.error('VERIFY_TOKEN not set');
+    return res.sendStatus(500);
+  }
+
   if (mode === 'subscribe' && token === process.env.VERIFY_TOKEN) {
     res.status(200).send(challenge);
   } else {
