@@ -26,12 +26,14 @@ app.get('/webhook', (req, res) => {
 });
 
 app.post('/webhook', async (req, res) => {
+  res.sendStatus(200);
+
   const entry = req.body?.entry?.[0];
   const change = entry?.changes?.[0];
   const leadgenId = change?.value?.leadgen_id;
 
   if (!leadgenId) {
-    return res.sendStatus(400);
+    return;
   }
 
   const url = `https://graph.facebook.com/v21.0/${leadgenId}?fields=field_data&access_token=${process.env.PAGE_ACCESS_TOKEN}`;
@@ -44,8 +46,6 @@ app.post('/webhook', async (req, res) => {
   }
 
   console.log('lead fetched:', data.field_data);
-
-  res.sendStatus(200);
 });
 
 app.listen(PORT, () => {
