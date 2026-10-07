@@ -1,0 +1,1 @@
+export const SERVER_URL = 'https://your-ngrok-domain.ngrok-free.dev';
