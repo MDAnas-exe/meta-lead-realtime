@@ -25,6 +25,19 @@ app.get('/webhook', (req, res) => {
   }
 });
 
+app.post('/webhook', async (req, res) => {
+  const entry = req.body?.entry?.[0];
+  const change = entry?.changes?.[0];
+  const leadgenId = change?.value?.leadgen_id;
+
+  if (!leadgenId) {
+    return res.sendStatus(400);
+  }
+
+  console.log('received leadgen_id:', leadgenId);
+  res.sendStatus(200);
+});
+
 app.listen(PORT, () => {
   console.log(`server on port ${PORT}`);
 });
