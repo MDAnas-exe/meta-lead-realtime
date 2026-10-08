@@ -1,7 +1,12 @@
 import 'dotenv/config';
 import express from 'express';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, { cors: { origin: '*' } });
+
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
@@ -48,6 +53,6 @@ app.post('/webhook', async (req, res) => {
   console.log('lead fetched:', data.field_data);
 });
 
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`server on port ${PORT}`);
 });
