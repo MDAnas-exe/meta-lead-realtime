@@ -35,6 +35,7 @@ function processAndBroadcastLead(leadId, fieldData) {
   if (!leadId || !fieldData) return;
 
   if (seenLeadIds.has(leadId)) return;
+  seenLeadIds.add(leadId);
 
   const lead = fieldData.reduce((acc, field) => {
     acc[field.name] = field.values[0];
