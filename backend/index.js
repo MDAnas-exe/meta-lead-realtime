@@ -6,7 +6,6 @@ import { Server } from 'socket.io';
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, { cors: { origin: '*' } });
-const seenLeadIds = new Set();
 
 const PORT = process.env.PORT || 3000;
 
@@ -33,8 +32,6 @@ app.get('/webhook', (req, res) => {
 
 function processAndBroadcastLead(leadId, fieldData) {
   if (!leadId || !fieldData) return;
-
-  if (seenLeadIds.has(leadId)) return;
 
   const lead = fieldData.reduce((acc, field) => {
     acc[field.name] = field.values[0];
