@@ -30,6 +30,18 @@ app.get('/webhook', (req, res) => {
   }
 });
 
+function processAndBroadcastLead(leadId, fieldData) {
+  if (!leadId || !fieldData) return;
+
+  const lead = fieldData.reduce((acc, field) => {
+    acc[field.name] = field.value;
+    return acc;
+  }, { id: leadId });
+
+  console.log('lead broadcasted:', lead);
+  io.emit('lead', lead);
+}
+
 app.post('/webhook', async (req, res) => {
   res.sendStatus(200);
 
@@ -50,7 +62,7 @@ app.post('/webhook', async (req, res) => {
     return;
   }
 
-  console.log('lead fetched:', data.field_data);
+  processAndBroadcastLead(leadgenId, data.field_data);
 });
 
 httpServer.listen(PORT, () => {
