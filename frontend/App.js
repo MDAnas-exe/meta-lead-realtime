@@ -27,13 +27,13 @@ export default function App() {
     });
 
     socket.on('lead', (newLead) => {
-      setLeads((prevLeads) => [
+      setLeads([
         {
           id: Date.now().toString(),
           receivedAt: new Date().toLocaleTimeString(),
           ...newLead,
         },
-        ...prevLeads,
+        ...leads,
       ]);
     });
 
