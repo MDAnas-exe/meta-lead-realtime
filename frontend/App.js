@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { io } from 'socket.io-client';
 import { SERVER_URL } from './config';
 
@@ -26,10 +26,38 @@ export default function App() {
       setIsConnected(false);
     });
 
+    socket.on('lead', (newLead) => {
+      setLeads((prevLeads) => [
+        {
+          id: Date.now().toString(),
+          receivedAt: new Date().toLocaleTimeString(),
+          ...newLead,
+        },
+        ...prevLeads,
+      ]);
+    });
+
     return () => {
       socket.disconnect();
     };
   }, []);
+
+  const renderItem = ({ item }) => (
+    <View style={styles.card}>
+      <View style={styles.cardHeader}>
+        <Text style={styles.cardTime}>{item.receivedAt}</Text>
+        <View style={[styles.badge, isConnected ? styles.badgeLive : styles.badgeDead]}>
+          <Text style={styles.badgeText}>
+            {isConnected ? 'Live' : 'Disconnected'}
+          </Text>
+        </View>
+      </View>
+      <Text style={styles.cardField}><Text style={styles.label}>Lead ID:</Text> {item.id || '—'}</Text>
+      <Text style={styles.cardField}><Text style={styles.label}>Name:</Text> {item.full_name || item.name || '—'}</Text>
+      <Text style={styles.cardField}><Text style={styles.label}>Email:</Text> {item.email || '—'}</Text>
+      <Text style={styles.cardField}><Text style={styles.label}>Phone:</Text> {item.phone_number || item.phone || '—'}</Text>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -41,9 +69,15 @@ export default function App() {
           </Text>
         </View>
       </View>
-      <Text style={styles.subtitle}>
-        {isConnected ? 'Waiting for leads...' : 'Connecting...'}
-      </Text>
+      <FlatList
+        data={leads}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.list}
+        ListEmptyComponent={
+          <Text style={styles.empty}>{isConnected ? 'Waiting for leads...' : 'Connecting...'}</Text>
+        }
+      />
     </View>
   );
 }
@@ -51,8 +85,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#fff',
     padding: 20,
   },
@@ -60,8 +92,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '100%',
-    marginBottom: 20,
+    marginBottom: 16,
   },
   title: {
     fontSize: 28,
@@ -82,8 +113,39 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
   },
-  subtitle: {
+  list: {
+    paddingBottom: 20,
+  },
+  empty: {
     fontSize: 16,
     color: '#666',
+    textAlign: 'center',
+    marginTop: 40,
+  },
+  card: {
+    backgroundColor: '#fafafa',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#eee',
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  cardTime: {
+    fontSize: 12,
+    color: '#888',
+  },
+  cardField: {
+    fontSize: 14,
+    marginVertical: 2,
+    color: '#333',
+  },
+  label: {
+    fontWeight: '600',
   },
 });
