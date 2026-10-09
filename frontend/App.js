@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import { io } from 'socket.io-client';
 import { SERVER_URL } from './config';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(false);
@@ -60,39 +61,41 @@ export default function App() {
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Lead Sync</Text>
-        <View style={styles.statusRow}>
-          {isConnected ? (
-            <View style={styles.liveIndicator}>
-              <View style={styles.pulseDot} />
-              <Text style={styles.statusText}>Live</Text>
-            </View>
-          ) : (
-            <View style={styles.connectingIndicator}>
-              <ActivityIndicator size="small" color="#ff9800" />
-              <Text style={styles.statusText}>Connecting...</Text>
-            </View>
-          )}
-        </View>
-      </View>
-      <FlatList
-        data={leads}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Lead Sync</Text>
+          <View style={styles.statusRow}>
             {isConnected ? (
-              <Text style={styles.empty}>Waiting for leads...</Text>
+              <View style={styles.liveIndicator}>
+                <View style={styles.pulseDot} />
+                <Text style={styles.statusText}>Live</Text>
+              </View>
             ) : (
-              <Text style={styles.empty}>Connecting to server...</Text>
+              <View style={styles.connectingIndicator}>
+                <ActivityIndicator size="small" color="#ff9800" />
+                <Text style={styles.statusText}>Connecting...</Text>
+              </View>
             )}
           </View>
-        }
-      />
-    </View>
+        </View>
+        <FlatList
+          data={leads}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.list}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              {isConnected ? (
+                <Text style={styles.empty}>Waiting for leads...</Text>
+              ) : (
+                <Text style={styles.empty}>Connecting to server...</Text>
+              )}
+            </View>
+          }
+        />
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
@@ -100,13 +103,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: 20,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 16,
+    paddingHorizontal: 20,
+    paddingTop: 10,
   },
   title: {
     fontSize: 28,
@@ -146,6 +150,7 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingBottom: 20,
+    paddingHorizontal: 20,
   },
   emptyContainer: {
     flex: 1,
