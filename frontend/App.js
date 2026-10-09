@@ -53,10 +53,12 @@ export default function App() {
           </Text>
         </View>
       </View>
-      <Text style={styles.cardField}><Text style={styles.label}>Lead ID:</Text> {item.id || '—'}</Text>
-      <Text style={styles.cardField}><Text style={styles.label}>Name:</Text> {item.full_name || item.name || '—'}</Text>
-      <Text style={styles.cardField}><Text style={styles.label}>Email:</Text> {item.email || '—'}</Text>
-      <Text style={styles.cardField}><Text style={styles.label}>Phone:</Text> {item.phone_number || item.phone || '—'}</Text>
+      <View style={styles.cardBody}>
+        <Text style={styles.cardField}><Text style={styles.label}>Lead ID:</Text> {item.id || '—'}</Text>
+        <Text style={styles.cardField}><Text style={styles.label}>Name:</Text> {item.full_name || item.name || '—'}</Text>
+        <Text style={styles.cardField}><Text style={styles.label}>Email:</Text> {item.email || '—'}</Text>
+        <Text style={styles.cardField}><Text style={styles.label}>Phone:</Text> {item.phone_number || item.phone || '—'}</Text>
+      </View>
     </View>
   );
 
@@ -169,12 +171,23 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderWidth: 1,
     borderColor: '#eee',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
   },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 10,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  cardBody: {
+    gap: 4,
   },
   cardTime: {
     fontSize: 12,
@@ -182,10 +195,25 @@ const styles = StyleSheet.create({
   },
   cardField: {
     fontSize: 14,
-    marginVertical: 2,
     color: '#333',
   },
   label: {
+    fontWeight: '600',
+    marginRight: 6,
+  },
+  badge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
+  badgeLive: {
+    backgroundColor: '#e8f5e9',
+  },
+  badgeDead: {
+    backgroundColor: '#fbe9e7',
+  },
+  badgeText: {
+    fontSize: 11,
     fontWeight: '600',
   },
 });
