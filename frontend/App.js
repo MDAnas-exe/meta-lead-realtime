@@ -26,7 +26,7 @@ export default function App() {
       setIsConnected(false);
     });
 
-    socket.on('lead', (newLead) => {
+    socket.on('new_lead', (newLead) => {
       setLeads((prevLeads) => [
         {
           id: Date.now().toString(),
