@@ -68,6 +68,11 @@ app.post('/webhook', async (req, res) => {
   processAndBroadcastLead(leadgenId, data.field_data);
 });
 
+function seedExistingLeads(leads) {
+  leads.forEach((item) => seenLeadIds.add(item.id));
+  isInitialized = true;
+}
+
 async function pollFormLeads() {
   if (!process.env.FORM_ID || !process.env.PAGE_ACCESS_TOKEN) return;
 
@@ -86,8 +91,8 @@ async function pollFormLeads() {
     }
 
     if (!isInitialized) {
-      result.data.forEach((item) => seenLeadIds.add(item.id));
-      isInitialized = true;
+      seedExistingLeads(result.data);
+      console.log('initialized with', result.data.length, 'existing leads');
       return;
     }
 
