@@ -1,1 +1,1 @@
-export const SERVER_URL = 'https://your-ngrok-domain.ngrok-free.dev';
+export const SERVER_URL = 'https://gem-juror-boogeyman.ngrok-free.dev';
