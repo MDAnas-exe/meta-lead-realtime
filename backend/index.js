@@ -82,7 +82,7 @@ async function pollFormLeads() {
     const result = await response.json();
 
     if (result.error) {
-      console.log('meta api error:', result.error.message);
+      console.log('meta api error:', result.error.message, 'code:', result.error.code);
       return;
     }
 
