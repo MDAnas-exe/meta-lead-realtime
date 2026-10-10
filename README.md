@@ -128,6 +128,15 @@ The form returns these fields (adjust `App.js` card rendering if your form diffe
 - `phone_number` — phone number
 - `id` — Meta's leadgen_id
 
+## Common Form Fields Reference
+
+| Field Key | Description | Example |
+|-----------|-------------|---------|
+| `full_name` | User's full name | "John Doe" |
+| `email` | Email address | "john@example.com" |
+| `phone_number` | Phone number | "+1-555-123-4567" |
+| `id` | Meta leadgen_id | "1234567890" |
+
 ## Troubleshooting
 
 | Issue | Cause | Fix |
