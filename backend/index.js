@@ -73,8 +73,20 @@ function seedExistingLeads(leads) {
   isInitialized = true;
 }
 
+function validatePollConfig() {
+  if (!process.env.FORM_ID) {
+    console.warn('FORM_ID not set, skipping poll');
+    return false;
+  }
+  if (!process.env.PAGE_ACCESS_TOKEN) {
+    console.warn('PAGE_ACCESS_TOKEN not set, skipping poll');
+    return false;
+  }
+  return true;
+}
+
 async function pollFormLeads() {
-  if (!process.env.FORM_ID || !process.env.PAGE_ACCESS_TOKEN) return;
+  if (!validatePollConfig()) return;
 
   try {
     const url = `https://graph.facebook.com/v21.0/${process.env.FORM_ID}/leads?fields=id,created_time,field_data&access_token=${process.env.PAGE_ACCESS_TOKEN}`;
