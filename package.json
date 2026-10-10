@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "concurrently \"npm run start:server\" \"npm run start:app\" \"npm run start:tunnel\"",
     "start:server": "npm --prefix backend start",
     "start:app": "npm --prefix frontend start",
     "start:tunnel": "npx ngrok http 3000",
