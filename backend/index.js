@@ -7,12 +7,11 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, { cors: { origin: '*' } });
 const seenLeadIds = new Set();
+let isInitialized = false;
 
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-
-console.log('env loaded, port:', PORT);
 
 app.get('/webhook', (req, res) => {
   const mode = req.query['hub.mode'];
@@ -69,6 +68,41 @@ app.post('/webhook', async (req, res) => {
   processAndBroadcastLead(leadgenId, data.field_data);
 });
 
+async function pollFormLeads() {
+  if (!process.env.FORM_ID || !process.env.PAGE_ACCESS_TOKEN) return;
+
+  try {
+    const url = `https://graph.facebook.com/v21.0/${process.env.FORM_ID}/leads?fields=id,created_time,field_data&access_token=${process.env.PAGE_ACCESS_TOKEN}`;
+    const response = await fetch(url);
+    const result = await response.json();
+
+    if (result.error) {
+      console.log('meta api error:', result.error.message);
+      return;
+    }
+
+    if (!result.data || !Array.isArray(result.data)) {
+      return;
+    }
+
+    if (!isInitialized) {
+      result.data.forEach((item) => seenLeadIds.add(item.id));
+      isInitialized = true;
+      return;
+    }
+
+    for (const item of result.data) {
+      if (!seenLeadIds.has(item.id)) {
+        processAndBroadcastLead(item.id, item.field_data);
+      }
+    }
+  } catch (err) {
+    console.error('polling error:', err.message);
+  }
+}
+
 httpServer.listen(PORT, () => {
-  console.log(`server on port ${PORT}`);
+  console.log(`meta-lead-realtime server running on port ${PORT}`);
+  pollFormLeads();
+  setInterval(pollFormLeads, 5000);
 });
